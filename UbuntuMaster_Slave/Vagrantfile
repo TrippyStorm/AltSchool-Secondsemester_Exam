@@ -1,0 +1,33 @@
+Vagrant.configure("2") do |config|
+  # Provision the Master server
+  config.vm.define "Master" do |master|
+    master.vm.box = "ubuntu/focal64"
+    master.vm.hostname = "Master"
+    master.vm.network "private_network", ip: "192.168.50.10"
+    master.vm.network "forwarded_port", guest: 80, host:8080
+    master.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+    end
+    master.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update && sudo apt-get upgrade -y
+    sudo apt-get install -y avahi-daemon libnss-mdns
+    SHELL
+  end
+
+  # Provision the Slave server
+  config.vm.define "Slave" do |slave|
+    slave.vm.box = "ubuntu/focal64"
+    slave.vm.hostname = "Slave"
+    slave.vm.network "private_network", ip: "192.168.50.11"
+    slave.vm.network "forwarded_port", guest: 80, host:8090
+    slave.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+    end
+    slave.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update && sudo apt-get upgrade -y
+    sudo apt-get install -y avahi-daemon libnss-mdns
+    SHELL
+  end
+end
