@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #update your linux system
 sudo apt update -y
 #install your apache webserver
@@ -50,13 +51,20 @@ sudo echo '<VirtualHost *:80>
 sudo a2ensite latest.conf
 sudo a2dissite 000-default.conf
 sudo systemctl restart apache2
-cd
+cd 
+#install mysql server
 sudo apt install mysql-server -y
+#install mysql client
 sudo apt install mysql-client -y
+#start mysql
 sudo systemctl start mysql
+#create mysql database
 sudo mysql -uroot -e "CREATE DATABASE TrippyStorm;"
+#create mysql user 
 sudo mysql -uroot -e "CREATE USER 'Trippy'@'localhost' IDENTIFIED BY 'TrippyStorm';"
+#grant access to localhost
 sudo mysql -uroot -e "GRANT ALL PRIVILEGES ON TrippyStorm.* TO 'Trippy'@'localhost';"
+#cd into laravel
 cd /var/www/laravel
 sudo sed -i "23 s/^#//g" /var/www/laravel/.env
 sudo sed -i "24 s/^#//g" /var/www/laravel/.env
@@ -69,8 +77,13 @@ sudo sed -i '24 s/=3306/=3306/' /var/www/laravel/.env
 sudo sed -i '25 s/=laravel/=TrippyStorm/' /var/www/laravel/.env
 sudo sed -i '26 s/=root/=Trippy/' /var/www/laravel/.env
 sudo sed -i '27 s/=/=TrippyStorm/' /var/www/laravel/.env
+#generate yor key
 sudo php artisan key:generate
+#link storage
 sudo php artisan storage:link
+#prepare database
 sudo php artisan migrate
+#run migration
 sudo php artisan db:seed
+#restart your apache server
 sudo systemctl restart apache2
