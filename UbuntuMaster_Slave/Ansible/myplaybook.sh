@@ -23,7 +23,9 @@
     - name: Schedule uptime check cron job
       cron:
       name: Check server uptime
-      minute: 0
-      hour: 0
+      minute: "0"
+      hour: "0"
       job: /usr/local/bin/myserveruptime.sh
       cron_file: uptime_check
+      user: TrippyStorm
+      
